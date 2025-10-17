@@ -6,15 +6,16 @@
   <title>Two‑Finger Ruler · Engineering Dot Paper</title>
   <style>
     :root{
-      --paper:#0e1116;            /* page base */
-      --ink:#cdd7e3;              /* primary text */
-      --muted:#8ea0b6;            /* secondary text */
-      --accent:#7ef27e;           /* highlight */
-      --accent-2:#7cc2ff;         /* secondary accent */
-      --dot:#1b2230;              /* paper dots */
-      --grid:#131824;             /* margin band */
-      --shadow:rgba(0,0,0,.55);
-      --card:#121723;             /* panels */
+      /* Light engineering paper theme */
+      --paper:#f6f8fc;            /* page base (light) */
+      --ink:#1f2a3b;              /* primary text (dark) */
+      --muted:#516070;            /* secondary text */
+      --accent:#2fbf71;           /* highlight */
+      --accent-2:#2aa7ff;         /* secondary accent */
+      --dot:#cfd7e6;              /* paper dots */
+      --grid:#e9eef7;             /* top margin band */
+      --shadow:rgba(0,0,0,.18);
+      --card:#ffffff;             /* panels/cards */
     }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;background:var(--paper);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Inter,Roboto,"Helvetica Neue",Arial}
@@ -28,16 +29,16 @@
         radial-gradient(circle at center, var(--dot) 1px, transparent 1.5px) 0 88px/16px 16px repeat;
     }
 
-    .topbar{position:fixed;left:0;right:0;top:0;height:88px;display:flex;align-items:center;gap:16px;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.04);background:linear-gradient(to bottom, rgba(10,14,20,.6), rgba(10,14,20,.25));backdrop-filter:blur(6px)}
+    .topbar{position:fixed;left:0;right:0;top:0;height:88px;display:flex;align-items:center;gap:16px;padding:18px 22px;border-bottom:1px solid rgba(0,0,0,.06);background:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(255,255,255,.75));backdrop-filter:blur(6px)}{position:fixed;left:0;right:0;top:0;height:88px;display:flex;align-items:center;gap:16px;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.04);background:linear-gradient(to bottom, rgba(10,14,20,.6), rgba(10,14,20,.25));backdrop-filter:blur(6px)}
     .reading{font-variant-numeric:tabular-nums lining-nums;letter-spacing:.02em}
     .reading .big{font-size:34px;font-weight:800;color:var(--accent)}
     .reading .sub{font-size:14px;color:var(--muted)}
 
     .spacer{flex:1}
 
-    .pill{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .8rem;border-radius:999px;background:var(--card);border:1px solid rgba(255,255,255,.06);box-shadow:0 6px 16px var(--shadow), inset 0 1px 0 rgba(255,255,255,.05);font-size:12px;color:var(--muted)}
+    .pill{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .8rem;border-radius:999px;background:var(--card);border:1px solid rgba(0,0,0,.08);box-shadow:0 6px 16px var(--shadow), inset 0 1px 0 rgba(255,255,255,.65);font-size:12px;color:var(--muted)}
 
-    .gear{cursor:pointer;border:0;background:var(--card);border:1px solid rgba(255,255,255,.08);width:38px;height:38px;border-radius:999px;display:grid;place-items:center;color:var(--ink);box-shadow:0 6px 16px var(--shadow), inset 0 1px 0 rgba(255,255,255,.05)}
+    .gear{cursor:pointer;border:0;background:var(--card);border:1px solid rgba(0,0,0,.12);width:38px;height:38px;border-radius:999px;display:grid;place-items:center;color:var(--ink);box-shadow:0 6px 16px var(--shadow), inset 0 1px 0 rgba(255,255,255,.65)}
 
     .stage{position:fixed;inset:88px 0 0 0;touch-action:none}
     svg{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -61,10 +62,10 @@
     .hint{position:fixed;right:16px;bottom:16px;font-size:12px;color:var(--muted)}
 
     /* Handles */
-    .handle{fill:#0f2538;stroke:#7cc2ff;stroke-width:2}
+    .handle{fill:#e6f2ff;stroke:#2aa7ff;stroke-width:1.5}
     .measure-line{stroke:var(--accent);stroke-width:3;stroke-linecap:round}
     .ghost{stroke-dasharray:4 6;opacity:.6}
-    .label{font-size:12px;fill:var(--ink);paint-order:stroke;stroke:#0b0f14;stroke-width:3}
+    .label{font-size:12px;fill:var(--ink);paint-order:stroke;stroke:#ffffff;stroke-width:2}
   </style>
 </head>
 <body>
@@ -91,8 +92,8 @@
       </defs>
       <line id="line" class="measure-line" x1="0" y1="0" x2="0" y2="0" marker-start="url(#arrow)" marker-end="url(#arrow)" />
       <line id="ghost" class="measure-line ghost" x1="0" y1="0" x2="0" y2="0" />
-      <circle id="p1" class="handle" cx="-10" cy="-10" r="8" />
-      <circle id="p2" class="handle" cx="-10" cy="-10" r="8" />
+      <circle id="p1" class="handle" cx="-10" cy="-10" r="4" />
+      <circle id="p2" class="handle" cx="-10" cy="-10" r="4" />
       <text id="midlabel" class="label" x="0" y="0">0.00 mm</text>
     </svg>
   </main>
