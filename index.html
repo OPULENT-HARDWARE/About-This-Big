@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>Two‑Finger Ruler · Engineering Dot Paper</title>
+  <style>
+    :root{
+      --paper:#0e1116;            /* page base */
+      --ink:#cdd7e3;              /* primary text */
+      --muted:#8ea0b6;            /* secondary text */
+      --accent:#7ef27e;           /* highlight */
+      --accent-2:#7cc2ff;         /* secondary accent */
+      --dot:#1b2230;              /* paper dots */
+      --grid:#131824;             /* margin band */
+      --shadow:rgba(0,0,0,.55);
+      --card:#121723;             /* panels */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:var(--paper);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Inter,Roboto,"Helvetica Neue",Arial}
+
+    /* Engineering dotted paper background */
+    .paper{position:fixed;inset:0;z-index:-1;
+      background:
+        /* top margin band */
+        linear-gradient(var(--grid),var(--grid)) top/100% 88px no-repeat,
+        /* dot field */
+        radial-gradient(circle at center, var(--dot) 1px, transparent 1.5px) 0 88px/16px 16px repeat;
+    }
+
+    .topbar{position:fixed;left:0;right:0;top:0;height:88px;display:flex;align-items:center;gap:16px;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.04);background:linear-gradient(to bottom, rgba(10,14,20,.6), rgba(10,14,20,.25));backdrop-filter:blur(6px)}
+    .reading{font-variant-numeric:tabular-nums lining-nums;letter-spacing:.02em}
+    .reading .big{font-size:34px;font-weight:800;color:var(--accent)}
+    .reading .sub{font-size:14px;color:var(--muted)}
+
+    .spacer{flex:1}
+
+    .pill{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .8rem;border-radius:999px;background:var(--card);border:1px solid rgba(255,255,255,.06);box-shadow:0 6px 16px var(--shadow), inset 0 1px 0 rgba(255,255,255,.05);font-size:12px;color:var(--muted)}
+
+    .gear{cursor:pointer;border:0;background:var(--card);border:1px solid rgba(255,255,255,.08);width:38px;height:38px;border-radius:999px;display:grid;place-items:center;color:var(--ink);box-shadow:0 6px 16px var(--shadow), inset 0 1px 0 rgba(255,255,255,.05)}
+
+    .stage{position:fixed;inset:88px 0 0 0;touch-action:none}
+    svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+    .legend{position:fixed;left:16px;bottom:16px;display:flex;gap:8px;flex-wrap:wrap}
+    .legend .tag{padding:.35rem .6rem;border-radius:999px;background:var(--card);border:1px solid rgba(255,255,255,.06);color:var(--muted);font-size:12px}
+
+    /* Modal */
+    dialog{border:0;border-radius:16px;background:var(--card);color:var(--ink);box-shadow:0 20px 60px var(--shadow);width:min(560px,92vw)}
+    dialog::backdrop{background:rgba(0,0,0,.5);backdrop-filter:blur(2px)}
+    .modal{padding:18px 18px 16px 18px}
+    .modal h2{margin:0 0 10px 0}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row{display:flex;gap:10px}
+    label{font-size:12px;color:var(--muted)}
+    input[type="number"], input[type="text"]{width:100%;padding:.55rem .65rem;border-radius:10px;background:#0e1421;border:1px solid rgba(255,255,255,.08);color:var(--ink)}
+    .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
+    .btn{appearance:none;border:0;border-radius:12px;padding:.6rem .9rem;background:#172033;color:#e7eef8;cursor:pointer;box-shadow:0 6px 16px var(--shadow), inset 0 1px 0 rgba(255,255,255,.05);font-weight:700}
+    .btn.alt{background:#0f1626}
+
+    .hint{position:fixed;right:16px;bottom:16px;font-size:12px;color:var(--muted)}
+
+    /* Handles */
+    .handle{fill:#0f2538;stroke:#7cc2ff;stroke-width:2}
+    .measure-line{stroke:var(--accent);stroke-width:3;stroke-linecap:round}
+    .ghost{stroke-dasharray:4 6;opacity:.6}
+    .label{font-size:12px;fill:var(--ink);paint-order:stroke;stroke:#0b0f14;stroke-width:3}
+  </style>
+</head>
+<body>
+  <div class="paper" aria-hidden="true"></div>
+
+  <header class="topbar" role="banner">
+    <div class="reading" id="readout">
+      <div class="big">0.00 mm <span style="color:var(--muted)">|</span> 0.000 in</div>
+      <div class="sub" id="pxinfo">0 px</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="pill" id="sys">
+      DPR: <span id="dpr"></span> · CSS→dev px ~ <span id="cssdev"></span>
+    </div>
+    <button class="gear" id="openSettings" title="Calibration & settings" aria-label="Calibration & settings">⚙️</button>
+  </header>
+
+  <main class="stage" id="stage" aria-label="Touch area for 2‑finger measurement">
+    <svg id="overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)" />
+        </marker>
+      </defs>
+      <line id="line" class="measure-line" x1="0" y1="0" x2="0" y2="0" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+      <line id="ghost" class="measure-line ghost" x1="0" y1="0" x2="0" y2="0" />
+      <circle id="p1" class="handle" cx="-10" cy="-10" r="8" />
+      <circle id="p2" class="handle" cx="-10" cy="-10" r="8" />
+      <text id="midlabel" class="label" x="0" y="0">0.00 mm</text>
+    </svg>
+  </main>
+
+  <div class="legend" aria-hidden="true">
+    <div class="tag">Touch with two fingers to measure</div>
+    <div class="tag">Mouse: click once, drag to place second point</div>
+  </div>
+
+  <div class="hint">Tip: Calibrate with your display's diagonal size and native resolution for accurate real‑world units.</div>
+
+  <dialog id="settings">
+    <form method="dialog" class="modal">
+      <h2>Calibration</h2>
+      <div class="grid">
+        <div>
+          <label>Display diagonal (inches)</label>
+          <input type="number" step="0.01" id="diagIn" />
+        </div>
+        <div>
+          <label>Native width (pixels)</label>
+          <input type="number" step="1" id="wIn" />
+        </div>
+        <div>
+          <label>Native height (pixels)</label>
+          <input type="number" step="1" id="hIn" />
+        </div>
+        <div>
+          <label>Measured CSS width (screen.width)</label>
+          <input type="number" id="cssW" disabled />
+        </div>
+        <div>
+          <label>Measured CSS height (screen.height)</label>
+          <input type="number" id="cssH" disabled />
+        </div>
+        <div>
+          <label>Device Pixel Ratio (browser)</label>
+          <input type="number" id="dprIn" disabled />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn alt" value="cancel">Close</button>
+        <button class="btn" id="save" value="default">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    // --- Calibration model ---
+    const S = {
+      diagIn: 15.6,          // inches (editable)
+      nativeW: 1920,         // device pixels (editable)
+      nativeH: 1080,         // device pixels (editable)
+      dpr: window.devicePixelRatio || 1,
+    };
+
+    // Try initialize with best guesses from the environment
+    function initGuesses(){
+      try{
+        const cssW = window.screen.width;   // CSS px
+        const cssH = window.screen.height;  // CSS px
+        const dpr = window.devicePixelRatio || 1;
+        // device (physical) pixels — approximation
+        const devW = Math.round(cssW * dpr);
+        const devH = Math.round(cssH * dpr);
+        if(devW && devH){ S.nativeW = devW; S.nativeH = devH; }
+        S.dpr = dpr;
+      }catch(e){/* ignore */}
+      // load persisted
+      const saved = localStorage.getItem('twofinger.calibration');
+      if(saved){ Object.assign(S, JSON.parse(saved)); }
+    }
+    initGuesses();
+
+    function save(){ localStorage.setItem('twofinger.calibration', JSON.stringify(S)); }
+
+    function ppiDevice(){ // device pixels per inch
+      const diagPx = Math.hypot(S.nativeW, S.nativeH);
+      return diagPx / S.diagIn; // px/in
+    }
+
+    function cssPxPerMM(){ // CSS px per mm
+      const ppiDev = ppiDevice();
+      return (ppiDev / S.dpr) / 25.4; // (device px / dpr) / 25.4
+    }
+
+    // --- UI wiring for settings ---
+    const dlg = document.getElementById('settings');
+    const diagIn = document.getElementById('diagIn');
+    const wIn = document.getElementById('wIn');
+    const hIn = document.getElementById('hIn');
+    const cssW = document.getElementById('cssW');
+    const cssH = document.getElementById('cssH');
+    const dprIn = document.getElementById('dprIn');
+
+    function openSettings(){
+      diagIn.value = S.diagIn;
+      wIn.value = S.nativeW;
+      hIn.value = S.nativeH;
+      cssW.value = window.screen.width;
+      cssH.value = window.screen.height;
+      dprIn.value = S.dpr;
+      dlg.showModal();
+    }
+
+    function applySettings(){
+      S.diagIn = parseFloat(diagIn.value) || S.diagIn;
+      S.nativeW = parseInt(wIn.value, 10) || S.nativeW;
+      S.nativeH = parseInt(hIn.value, 10) || S.nativeH;
+      save();
+      updateSystemBadge();
+      render();
+    }
+
+    document.getElementById('openSettings').addEventListener('click', openSettings);
+    document.getElementById('save').addEventListener('click', (e)=>{ e.preventDefault(); applySettings(); dlg.close();});
+
+    function updateSystemBadge(){
+      document.getElementById('dpr').textContent = S.dpr.toFixed(2);
+      document.getElementById('cssdev').textContent = `${S.nativeW}×${S.nativeH}`;
+    }
+    updateSystemBadge();
+
+    // --- Measurement engine ---
+    const stage = document.getElementById('stage');
+    const svg = document.getElementById('overlay');
+    const p1 = document.getElementById('p1');
+    const p2 = document.getElementById('p2');
+    const line = document.getElementById('line');
+    const ghost = document.getElementById('ghost');
+    const label = document.getElementById('midlabel');
+    const readout = document.getElementById('readout');
+    const pxInfo = document.getElementById('pxinfo');
+
+    let a = null, b = null; // points in CSS pixels {x,y}
+
+    function cssToViewBox(x, y){ // convert CSS px to viewBox (0..100)
+      const r = stage.getBoundingClientRect();
+      return {
+        x: (x - r.left) / r.width * 100,
+        y: (y - r.top)  / r.height * 100
+      };
+    }
+
+    function midpoint(p, q){ return { x:(p.x+q.x)/2, y:(p.y+q.y)/2 }; }
+
+    function updateGraphics(){
+      if(!a || !b){
+        p1.setAttribute('cx', -10); p1.setAttribute('cy', -10);
+        p2.setAttribute('cx', -10); p2.setAttribute('cy', -10);
+        line.setAttribute('x1', 0); line.setAttribute('y1', 0);
+        line.setAttribute('x2', 0); line.setAttribute('y2', 0);
+        label.setAttribute('x', 0); label.setAttribute('y', 0);
+        readout.querySelector('.big').textContent = `0.00 mm | 0.000 in`;
+        pxInfo.textContent = `0 px`;
+        return;
+      }
+      const vb1 = cssToViewBox(a.x, a.y);
+      const vb2 = cssToViewBox(b.x, b.y);
+      p1.setAttribute('cx', vb1.x); p1.setAttribute('cy', vb1.y);
+      p2.setAttribute('cx', vb2.x); p2.setAttribute('cy', vb2.y);
+      line.setAttribute('x1', vb1.x); line.setAttribute('y1', vb1.y);
+      line.setAttribute('x2', vb2.x); line.setAttribute('y2', vb2.y);
+      ghost.setAttribute('x1', vb1.x); ghost.setAttribute('y1', vb1.y);
+      ghost.setAttribute('x2', vb2.x); ghost.setAttribute('y2', vb2.y);
+
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const distPx = Math.hypot(dx, dy); // CSS px
+      const pxPerMM = cssPxPerMM();
+      const mm = distPx / pxPerMM;
+      const inches = mm / 25.4;
+      const mid = cssToViewBox((a.x+b.x)/2, (a.y+b.y)/2);
+      label.setAttribute('x', mid.x);
+      label.setAttribute('y', mid.y - 1.5);
+      label.textContent = `${mm.toFixed(2)} mm`;
+      readout.querySelector('.big').textContent = `${mm.toFixed(2)} mm | ${inches.toFixed(3)} in`;
+      pxInfo.textContent = `${distPx.toFixed(1)} px  ·  ${pxPerMM.toFixed(3)} px/mm`;
+    }
+
+    // Touch handling (two fingers)
+    let tId1 = null, tId2 = null;
+
+    function getPos(t){ return { x:t.clientX, y:t.clientY }; }
+
+    stage.addEventListener('touchstart', (e)=>{
+      e.preventDefault();
+      for(const t of e.changedTouches){
+        if(tId1===null){ tId1 = t.identifier; a = getPos(t); }
+        else if(tId2===null){ tId2 = t.identifier; b = getPos(t); }
+      }
+      updateGraphics();
+    }, {passive:false});
+
+    stage.addEventListener('touchmove', (e)=>{
+      e.preventDefault();
+      for(const t of e.changedTouches){
+        if(t.identifier===tId1) a = getPos(t);
+        if(t.identifier===tId2) b = getPos(t);
+      }
+      if(tId1!==null && tId2!==null) updateGraphics();
+    }, {passive:false});
+
+    stage.addEventListener('touchend', (e)=>{
+      for(const t of e.changedTouches){
+        if(t.identifier===tId1) tId1 = null;
+        if(t.identifier===tId2) tId2 = null;
+      }
+      if(tId1===null || tId2===null){ /* keep last reading */ }
+    });
+
+    // Mouse fallback: click to set first point, drag to set second
+    let dragging = false;
+    stage.addEventListener('mousedown', (e)=>{ a = {x:e.clientX,y:e.clientY}; b = {x:e.clientX,y:e.clientY}; dragging = true; updateGraphics(); });
+    window.addEventListener('mousemove', (e)=>{ if(!dragging) return; b = {x:e.clientX,y:e.clientY}; updateGraphics(); });
+    window.addEventListener('mouseup', ()=> dragging=false);
+
+    // Render once
+    function render(){ updateGraphics(); }
+    render();
+
+    // Resize observer keeps SVG viewBox mapping correct
+    new ResizeObserver(()=> updateGraphics()).observe(stage);
+  </script>
+</body>
+</html>
