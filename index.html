@@ -1,68 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-  <title>This Big — by OPULENT HARDWARE</title>
-  <style>
-    :root{
-      /* Fixed light theme */
-      --paper:#f7faf8;            /* plain paper (no dots) */
-      --ink:#17221c;              /* primary text */
-      --muted:#5a6d63;            /* secondary text */
-      --accent:#18a34a;           /* measure color */
-      --grid:#e8f0eb;             /* top margin band */
-      --shadow:rgba(16,24,16,.18);
-      --card:#ffffff;             /* panels/cards */
-      color-scheme: light;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:var(--paper);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Inter,Roboto,"Helvetica Neue",Arial}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<title>This Big — by OPULENT HARDWARE</title>
+<style>
+  :root{
+    /* Fixed light theme */
+    --paper:#e9f5ef;            /* mint-green paper (no dots) */
+    --paper-band:#e9f5ef;       /* same as paper (no visible band) */
+    --ink:#17221c;
+    --muted:#5a6d63;
+    --accent:#18a34a;           /* measure color */
+    --shadow:rgba(16,24,16,.18);
+    --card:#ffffff;
+    color-scheme: light;        /* don’t follow OS dark mode */
+  }
+  *{ box-sizing:border-box }
+  html,body{
+    height:100%; margin:0; background:var(--paper); color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Inter,Roboto,"Helvetica Neue",Arial;
+  }
 
-    /* Top margin strip */
-    .paper{position:fixed;inset:0;z-index:0;pointer-events:none;background:
-      linear-gradient(var(--grid),var(--grid)) top/100% 80px no-repeat;}
+  /* Background layer (no dots, top band same color so it disappears) */
+  .paper{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background: linear-gradient(var(--paper-band),var(--paper-band)) top/100% 80px no-repeat;
+  }
 
-    /* Header */
-    .topbar{position:fixed;left:0;right:0;top:0;z-index:2;min-height:64px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 12px;background:#fff;border-bottom:1px solid rgba(0,0,0,.06);box-shadow:0 6px 18px var(--shadow)}
-    .brand .title{font-weight:800;font-size:clamp(16px,4.6vw,20px)}
-    .brand .byline{font-size:clamp(10px,2.6vw,12px);color:var(--muted);margin-top:2px}
-    .reading{font-variant-numeric:tabular-nums lining-nums;letter-spacing:.02em}
-    .reading .big{font-size:clamp(16px,6.4vw,28px);font-weight:800;color:var(--accent);white-space:nowrap}
-    .reading .sub{font-size:clamp(10px,2.8vw,13px);color:var(--muted)}
-    .reading .sep{color:#98a6a0}
-    .spacer{flex:1}
-    .pill{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .6rem;border-radius:999px;background:var(--card);border:1px solid rgba(0,0,0,.12);box-shadow:0 6px 16px var(--shadow);font-size:clamp(10px,2.8vw,12px);color:var(--muted);white-space:nowrap}
-    .gear{cursor:pointer;border:1px solid rgba(0,0,0,.12);width:38px;height:38px;border-radius:999px;display:grid;place-items:center;background:var(--card);color:var(--ink);box-shadow:0 6px 16px var(--shadow)}
+  /* Header */
+  .topbar{
+    position:fixed; left:0; right:0; top:0; z-index:2;
+    min-height:64px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    padding:10px 12px; background:#fff; border-bottom:1px solid rgba(0,0,0,.06);
+    box-shadow:0 6px 18px var(--shadow);
+  }
+  .brand .title{font-weight:800; font-size:clamp(16px,4.6vw,20px)}
+  .brand .byline{font-size:clamp(10px,2.6vw,12px); color:var(--muted); margin-top:2px}
 
-    /* Measuring stage */
-    .stage{position:fixed;inset:80px 0 0 0;touch-action:none;z-index:1}
-    @media (max-width:600px){ .stage{ inset:70px 0 0 0; } }
-    svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible;background:transparent}
+  .reading{font-variant-numeric:tabular-nums lining-nums; letter-spacing:.02em}
+  .reading .big{font-size:clamp(16px,6.4vw,28px); font-weight:800; color:var(--accent); white-space:nowrap}
+  .reading .sub{font-size:clamp(10px,2.8vw,13px); color:var(--muted)}
+  .reading .sep{color:#98a6a0}
+  .spacer{flex:1}
 
-    /* Legend chips */
-    .legend{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;gap:8px;flex-wrap:wrap;z-index:2}
-    .legend .tag{padding:.35rem .6rem;border-radius:999px;background:var(--card);border:1px solid rgba(0,0,0,.12);color:var(--muted);font-size:clamp(10px,2.8vw,12px);box-shadow:0 4px 10px var(--shadow)}
+  .pill{
+    display:inline-flex; align-items:center; gap:.4rem; white-space:nowrap;
+    padding:.4rem .6rem; border-radius:999px; background:var(--card);
+    border:1px solid rgba(0,0,0,.12); box-shadow:0 6px 16px var(--shadow);
+    font-size:clamp(10px,2.8vw,12px); color:var(--muted)
+  }
+  .gear{
+    cursor:pointer; border:1px solid rgba(0,0,0,.12);
+    width:38px; height:38px; border-radius:999px; display:grid; place-items:center;
+    background:var(--card); color:var(--ink); box-shadow:0 6px 16px var(--shadow)
+  }
 
-    /* Modal */
-    dialog{border:0;border-radius:16px;background:#fff;color:var(--ink);box-shadow:0 20px 60px var(--shadow);width:min(560px,92vw);color-scheme: light}
-    dialog::backdrop{background:rgba(0,0,0,.35)}
-    .modal{padding:18px}
-    .modal h2{margin:0 0 10px 0}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    label{font-size:12px;color:var(--muted)}
-    input[type="number"], input[type="text"], select, button{appearance:none;background:#fff !important;color:#0f1a17;border:1px solid #cfdad3;border-radius:10px;padding:.6rem .7rem;box-shadow:inset 0 1px 0 rgba(0,0,0,.02)}
-    input:focus, select:focus, button:focus{outline:2px solid rgba(24,163,74,.35);outline-offset:2px}
-    .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
-    .btn{border:1px solid #cfe3d7;border-radius:12px;padding:.6rem .9rem;background:#eff7f2;color:#0d2918;cursor:pointer;box-shadow:0 6px 16px var(--shadow);font-weight:700}
-    .btn.alt{background:#f7faf8;color:#24332e}
+  /* Measuring stage */
+  .stage{position:fixed; inset:80px 0 0 0; touch-action:none; z-index:1}
+  @media (max-width:600px){ .stage{ inset:70px 0 0 0; } }
+  svg{position:absolute; inset:0; width:100%; height:100%; display:block; overflow:visible; background:transparent}
 
-    /* Measurement visuals */
-    .measure-line{stroke:var(--accent);stroke-width:2;stroke-linecap:round;vector-effect:non-scaling-stroke}
-    .ghost{stroke:var(--accent);stroke-opacity:.35;stroke-dasharray:4 6;vector-effect:non-scaling-stroke}
-    .endcap{stroke:var(--accent);stroke-width:2.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
-    .label{display:none}
-  </style>
+  /* Instruction chips */
+  .legend{
+    position:fixed; left:16px; right:16px;
+    bottom:calc(env(safe-area-inset-bottom,0px) + 12px);
+    display:flex; gap:8px; flex-wrap:wrap; z-index:2
+  }
+  .legend .tag{
+    padding:.35rem .6rem; border-radius:999px; background:var(--card);
+    border:1px solid rgba(0,0,0,.12); color:var(--muted);
+    font-size:clamp(10px,2.8vw,12px); box-shadow:0 4px 10px var(--shadow)
+  }
+
+  /* Modal — always light */
+  dialog{
+    border:0; border-radius:16px; background:#fff; color:var(--ink);
+    box-shadow:0 20px 60px var(--shadow); width:min(560px,92vw); color-scheme:light
+  }
+  dialog::backdrop{background:rgba(0,0,0,.35)}
+  .modal{padding:18px}
+  .modal h2{margin:0 0 10px 0}
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  label{font-size:12px; color:var(--muted)}
+  input[type="number"], input[type="text"], select, button{
+    appearance:none; background:#fff !important; color:#0f1a17;
+    border:1px solid #cfdad3; border-radius:10px; padding:.6rem .7rem;
+    box-shadow:inset 0 1px 0 rgba(0,0,0,.02)
+  }
+  input:focus, select:focus, button:focus{outline:2px solid rgba(24,163,74,.35); outline-offset:2px}
+  .actions{display:flex; justify-content:flex-end; gap:10px; margin-top:12px}
+  .btn{border:1px solid #cfe3d7; border-radius:12px; padding:.6rem .9rem; background:#eff7f2; color:#0d2918; cursor:pointer; box-shadow:0 6px 16px var(--shadow); font-weight:700}
+  .btn.alt{background:#f7faf8; color:#24332e}
+
+  /* Measure visuals */
+  .measure-line{stroke:var(--accent); stroke-width:2; stroke-linecap:round; vector-effect:non-scaling-stroke}
+  .ghost{stroke:var(--accent); stroke-opacity:.35; stroke-dasharray:4 6; vector-effect:non-scaling-stroke}
+  .handle{fill:#ffffff; stroke:var(--accent); stroke-width:2.5; opacity:.98}
+  .label{display:none} /* no mid-paper label */
+</style>
 </head>
 <body>
   <div class="paper" aria-hidden="true"></div>
@@ -81,13 +117,13 @@
     <button class="gear" id="openSettings" title="Calibration & settings" aria-label="Calibration & settings">⚙️</button>
   </header>
 
-  <main class="stage" id="stage" aria-label="Touch area for 2‑finger measurement">
+  <main class="stage" id="stage" aria-label="Touch area for 2-finger measurement">
     <svg id="overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <line id="line"  class="measure-line" x1="0" y1="0" x2="0" y2="0"/>
-      <line id="ghost" class="measure-line ghost" x1="0" y1="0" x2="0" y2="0"/>
-      <circle id="h1" class="handle" cx="-10" cy="-10" r="1.6"/>
-      <circle id="h2" class="handle" cx="-10" cy="-10" r="1.6"/>
-      <text id="midlabel" class="label" x="0" y="0">0.00 mm</text>
+      <line   id="line"  class="measure-line" x1="0" y1="0" x2="0" y2="0"/>
+      <line   id="ghost" class="measure-line ghost" x1="0" y1="0" x2="0" y2="0"/>
+      <circle id="h1" class="handle" cx="-10" cy="-10" r="1.8"/>
+      <circle id="h2" class="handle" cx="-10" cy="-10" r="1.8"/>
+      <text   id="midlabel" class="label" x="0" y="0">0.00 mm</text>
     </svg>
   </main>
 
@@ -100,6 +136,7 @@
     <form method="dialog" class="modal">
       <h2>Calibration</h2>
       <div class="grid">
+        <!-- LEFT: Native (device) -->
         <div>
           <label>Display diagonal (inches)</label>
           <input type="number" step="0.01" id="diagIn" />
@@ -112,6 +149,7 @@
           <label>Native height (pixels)</label>
           <input type="number" step="1" id="hIn" />
         </div>
+        <!-- RIGHT: Measured CSS / Browser -->
         <div>
           <label>Measured CSS width (screen.width)</label>
           <input type="number" id="cssW" disabled />
@@ -132,170 +170,167 @@
     </form>
   </dialog>
 
-  <script>
-    // --- Calibration model ---
-    const S = {
-      diagIn: 15.6,          // inches (editable)
-      nativeW: 1920,         // device pixels (editable)
-      nativeH: 1080,         // device pixels (editable)
-      dpr: window.devicePixelRatio || 1,
-    };
+<script>
+  // --- Calibration model ---
+  const S = {
+    diagIn: 15.6,          // inches (editable)
+    nativeW: 1920,         // device pixels (editable)
+    nativeH: 1080,         // device pixels (editable)
+    dpr: window.devicePixelRatio || 1,
+  };
 
-    // Initialize with best guesses + persisted values
-    function initGuesses(){
-      try{
-        const cssW = window.screen.width;   // CSS px
-        const cssH = window.screen.height;  // CSS px
-        const dpr = window.devicePixelRatio || 1;
-        const devW = Math.round(cssW * dpr);
-        const devH = Math.round(cssH * dpr);
-        if(devW && devH){ S.nativeW = devW; S.nativeH = devH; }
-        S.dpr = dpr;
-      }catch(e){}
-      const saved = localStorage.getItem('twofinger.calibration');
-      if(saved){ Object.assign(S, JSON.parse(saved)); }
-    }
-    initGuesses();
+  // Initialize with best guesses + persisted values
+  function initGuesses(){
+    try{
+      const cssW = window.screen.width;   // CSS px
+      const cssH = window.screen.height;  // CSS px
+      const dpr  = window.devicePixelRatio || 1;
+      const devW = Math.round(cssW * dpr);
+      const devH = Math.round(cssH * dpr);
+      if (devW && devH){ S.nativeW = devW; S.nativeH = devH; }
+      S.dpr = dpr;
+    }catch(e){}
+    const saved = localStorage.getItem('twofinger.calibration');
+    if (saved) Object.assign(S, JSON.parse(saved));
+  }
+  initGuesses();
 
-    function save(){ localStorage.setItem('twofinger.calibration', JSON.stringify(S)); }
+  function save(){ localStorage.setItem('twofinger.calibration', JSON.stringify(S)); }
 
-    function ppiDevice(){ // device pixels per inch
-      const diagPx = Math.hypot(S.nativeW, S.nativeH);
-      return diagPx / S.diagIn; // px/in
-    }
+  function ppiDevice(){ // device pixels per inch
+    const diagPx = Math.hypot(S.nativeW, S.nativeH);
+    return diagPx / S.diagIn; // px/in
+  }
+  function cssPxPerMM(){ // CSS px per mm
+    const ppiDev = ppiDevice();
+    return (ppiDev / S.dpr) / 25.4; // (device px / dpr) / 25.4
+  }
 
-    function cssPxPerMM(){ // CSS px per mm
-      const ppiDev = ppiDevice();
-      return (ppiDev / S.dpr) / 25.4; // (device px / dpr) / 25.4
-    }
+  // --- Settings dialog wiring ---
+  const dlg   = document.getElementById('settings');
+  const diagIn = document.getElementById('diagIn');
+  const wIn   = document.getElementById('wIn');
+  const hIn   = document.getElementById('hIn');
+  const cssW  = document.getElementById('cssW');
+  const cssH  = document.getElementById('cssH');
+  const dprIn = document.getElementById('dprIn');
 
-    // --- UI wiring for settings ---
-    const dlg = document.getElementById('settings');
-    const diagIn = document.getElementById('diagIn');
-    const wIn = document.getElementById('wIn');
-    const hIn = document.getElementById('hIn');
-    const cssW = document.getElementById('cssW');
-    const cssH = document.getElementById('cssH');
-    const dprIn = document.getElementById('dprIn');
+  document.getElementById('openSettings').addEventListener('click', ()=>{
+    diagIn.value = S.diagIn;
+    wIn.value = S.nativeW;
+    hIn.value = S.nativeH;
+    cssW.value = window.screen.width;
+    cssH.value = window.screen.height;
+    dprIn.value = S.dpr;
+    dlg.showModal();
+  });
 
-    function openSettings(){
-      diagIn.value = S.diagIn;
-      wIn.value = S.nativeW;
-      hIn.value = S.nativeH;
-      cssW.value = window.screen.width;
-      cssH.value = window.screen.height;
-      dprIn.value = S.dpr;
-      dlg.showModal();
-    }
-
-    function applySettings(){
-      S.diagIn  = parseFloat(diagIn.value) || S.diagIn;
-      S.nativeW = parseInt(wIn.value, 10) || S.nativeW;
-      S.nativeH = parseInt(hIn.value, 10) || S.nativeH;
-      save();
-      updateSystemBadge();
-      render();
-    }
-
-    document.getElementById('openSettings').addEventListener('click', openSettings);
-    document.getElementById('save').addEventListener('click', (e)=>{ e.preventDefault(); applySettings(); dlg.close();});
-
-    function updateSystemBadge(){
-      document.getElementById('dpr').textContent = S.dpr.toFixed(2);
-      document.getElementById('cssdev').textContent = `${S.nativeW}×${S.nativeH}`;
-    }
+  document.getElementById('save').addEventListener('click', (e)=>{
+    e.preventDefault();
+    S.diagIn  = parseFloat(diagIn.value) || S.diagIn;
+    S.nativeW = parseInt(wIn.value, 10) || S.nativeW;
+    S.nativeH = parseInt(hIn.value, 10) || S.nativeH;
+    save();
     updateSystemBadge();
-
-    // --- Measurement engine ---
-    const stage = document.getElementById('stage');
-    const line  = document.getElementById('line');
-    const ghost = document.getElementById('ghost');
-    const h1  = document.getElementById('h1');
-    const h2  = document.getElementById('h2');
-    const readout = document.getElementById('readout');
-    const pxInfo  = document.getElementById('pxinfo');  = document.getElementById('pxinfo');
-
-    let a = null, b = null; // points in CSS pixels {x,y}
-
-    function cssToViewBox(x, y){ // convert CSS px to viewBox (0..100)
-      const r = stage.getBoundingClientRect();
-      return { x: (x - r.left) / r.width * 100, y: (y - r.top) / r.height * 100 };
-    }
-
-    function updateGraphics(){
-      if(!a || !b){
-        line.setAttribute('x1',0); line.setAttribute('y1',0);
-        line.setAttribute('x2',0); line.setAttribute('y2',0);
-        ghost.setAttribute('x1',0); ghost.setAttribute('y1',0);
-        ghost.setAttribute('x2',0); ghost.setAttribute('y2',0);
-        h1.setAttribute('cx',-10); h1.setAttribute('cy',-10);
-        h2.setAttribute('cx',-10); h2.setAttribute('cy',-10);
-        readout.querySelector('.big').textContent = `0.00 mm | 0.000 in`;
-        pxInfo.textContent = `0 px`;
-        return;
-      }
-
-      const vb1 = cssToViewBox(a.x, a.y);
-      const vb2 = cssToViewBox(b.x, b.y);
-      line.setAttribute('x1', vb1.x); line.setAttribute('y1', vb1.y);
-      line.setAttribute('x2', vb2.x); line.setAttribute('y2', vb2.y);
-      ghost.setAttribute('x1', vb1.x); ghost.setAttribute('y1', vb1.y);
-      ghost.setAttribute('x2', vb2.x); ghost.setAttribute('y2', vb2.y);
-
-      // Endpoint circles (handles)
-      h1.setAttribute('cx', vb1.x); h1.setAttribute('cy', vb1.y);
-      h2.setAttribute('cx', vb2.x); h2.setAttribute('cy', vb2.y);
-
-      // Numeric readout
-      const dxCss = b.x - a.x, dyCss = b.y - a.y;
-      const distPx = Math.hypot(dxCss, dyCss);          // CSS px
-      const pxPerMM = cssPxPerMM();
-      const mm = distPx / pxPerMM;
-      const inches = mm / 25.4;
-      readout.querySelector('.big').textContent = `${mm.toFixed(2)} mm | ${inches.toFixed(3)} in`;
-      pxInfo.textContent = `${distPx.toFixed(1)} px  ·  ${pxPerMM.toFixed(3)} px/mm`;
-    }
-
-    // Touch handling (two fingers)
-    let tId1 = null, tId2 = null;
-    const getPos = t => ({ x:t.clientX, y:t.clientY });
-
-    stage.addEventListener('touchstart', (e)=>{
-      e.preventDefault();
-      for(const t of e.changedTouches){
-        if(tId1===null){ tId1 = t.identifier; a = getPos(t); }
-        else if(tId2===null){ tId2 = t.identifier; b = getPos(t); }
-      }
-      updateGraphics();
-    }, {passive:false});
-
-    stage.addEventListener('touchmove', (e)=>{
-      e.preventDefault();
-      for(const t of e.changedTouches){
-        if(t.identifier===tId1) a = getPos(t);
-        if(t.identifier===tId2) b = getPos(t);
-      }
-      if(tId1!==null && tId2!==null) updateGraphics();
-    }, {passive:false});
-
-    stage.addEventListener('touchend', (e)=>{
-      for(const t of e.changedTouches){
-        if(t.identifier===tId1) tId1 = null;
-        if(t.identifier===tId2) tId2 = null;
-      }
-      /* keep last reading */
-    });
-
-    // Mouse fallback: click to set first point, drag to set second
-    let dragging = false;
-    stage.addEventListener('mousedown', (e)=>{ a = {x:e.clientX,y:e.clientY}; b = {x:e.clientX,y:e.clientY}; dragging = true; updateGraphics(); });
-    window.addEventListener('mousemove', (e)=>{ if(!dragging) return; b = {x:e.clientX,y:e.clientY}; updateGraphics(); });
-    window.addEventListener('mouseup', ()=> dragging=false);
-
-    // Render once + keep viewBox mapping fresh
-    function render(){ updateGraphics(); }
     render();
-    new ResizeObserver(()=> updateGraphics()).observe(stage);
-  </script>
+    dlg.close();
+  });
+
+  function updateSystemBadge(){
+    document.getElementById('dpr').textContent = S.dpr.toFixed(2);
+    document.getElementById('cssdev').textContent = `${S.nativeW}×${S.nativeH}`;
+  }
+  updateSystemBadge();
+
+  // --- Measurement engine ---
+  const stage   = document.getElementById('stage');
+  const line    = document.getElementById('line');
+  const ghost   = document.getElementById('ghost');
+  const h1      = document.getElementById('h1');
+  const h2      = document.getElementById('h2');
+  const readout = document.getElementById('readout');
+  const pxInfo  = document.getElementById('pxinfo');
+
+  let a = null, b = null; // points in CSS pixels {x,y}
+
+  function cssToViewBox(x, y){ // convert CSS px to viewBox (0..100)
+    const r = stage.getBoundingClientRect();
+    return { x: (x - r.left) / r.width * 100, y: (y - r.top) / r.height * 100 };
+  }
+
+  function updateGraphics(){
+    if(!a || !b){
+      line.setAttribute('x1',0); line.setAttribute('y1',0);
+      line.setAttribute('x2',0); line.setAttribute('y2',0);
+      ghost.setAttribute('x1',0); ghost.setAttribute('y1',0);
+      ghost.setAttribute('x2',0); ghost.setAttribute('y2',0);
+      h1.setAttribute('cx',-10); h1.setAttribute('cy',-10);
+      h2.setAttribute('cx',-10); h2.setAttribute('cy',-10);
+      readout.querySelector('.big').textContent = `0.00 mm | 0.000 in`;
+      pxInfo.textContent = `0 px`;
+      return;
+    }
+
+    const vb1 = cssToViewBox(a.x, a.y);
+    const vb2 = cssToViewBox(b.x, b.y);
+    line.setAttribute('x1', vb1.x); line.setAttribute('y1', vb1.y);
+    line.setAttribute('x2', vb2.x); line.setAttribute('y2', vb2.y);
+    ghost.setAttribute('x1', vb1.x); ghost.setAttribute('y1', vb1.y);
+    ghost.setAttribute('x2', vb2.x); ghost.setAttribute('y2', vb2.y);
+
+    // circular handles
+    h1.setAttribute('cx', vb1.x); h1.setAttribute('cy', vb1.y);
+    h2.setAttribute('cx', vb2.x); h2.setAttribute('cy', vb2.y);
+
+    // Numeric readout
+    const dxCss = b.x - a.x, dyCss = b.y - a.y;
+    const distPx = Math.hypot(dxCss, dyCss);          // CSS px
+    const pxPerMM = cssPxPerMM();
+    const mm = distPx / pxPerMM;
+    const inches = mm / 25.4;
+    readout.querySelector('.big').textContent = `${mm.toFixed(2)} mm | ${inches.toFixed(3)} in`;
+    pxInfo.textContent = `${distPx.toFixed(1)} px  ·  ${pxPerMM.toFixed(3)} px/mm`;
+  }
+
+  // Touch handling (two fingers)
+  let tId1 = null, tId2 = null;
+  const getPos = t => ({ x:t.clientX, y:t.clientY });
+
+  stage.addEventListener('touchstart', (e)=>{
+    e.preventDefault();
+    for(const t of e.changedTouches){
+      if(tId1===null){ tId1 = t.identifier; a = getPos(t); }
+      else if(tId2===null){ tId2 = t.identifier; b = getPos(t); }
+    }
+    updateGraphics();
+  }, {passive:false});
+
+  stage.addEventListener('touchmove', (e)=>{
+    e.preventDefault();
+    for(const t of e.changedTouches){
+      if(t.identifier===tId1) a = getPos(t);
+      if(t.identifier===tId2) b = getPos(t);
+    }
+    if(tId1!==null && tId2!==null) updateGraphics();
+  }, {passive:false});
+
+  stage.addEventListener('touchend', (e)=>{
+    for(const t of e.changedTouches){
+      if(t.identifier===tId1) tId1 = null;
+      if(t.identifier===tId2) tId2 = null;
+    }
+    /* keep last reading */
+  });
+
+  // Mouse fallback: click to set first point, drag to set second
+  let dragging = false;
+  stage.addEventListener('mousedown', (e)=>{ a = {x:e.clientX,y:e.clientY}; b = {x:e.clientX,y:e.clientY}; dragging = true; updateGraphics(); });
+  window.addEventListener('mousemove', (e)=>{ if(!dragging) return; b = {x:e.clientX,y:e.clientY}; updateGraphics(); });
+  window.addEventListener('mouseup', ()=> dragging=false);
+
+  function render(){ updateGraphics(); }
+  render();
+  new ResizeObserver(()=> updateGraphics()).observe(stage);
+</script>
 </body>
 </html>
