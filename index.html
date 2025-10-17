@@ -85,8 +85,8 @@
     <svg id="overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
       <line id="line"  class="measure-line" x1="0" y1="0" x2="0" y2="0"/>
       <line id="ghost" class="measure-line ghost" x1="0" y1="0" x2="0" y2="0"/>
-      <line id="cap1" class="endcap" x1="0" y1="0" x2="0" y2="0"/>
-      <line id="cap2" class="endcap" x1="0" y1="0" x2="0" y2="0"/>
+      <circle id="h1" class="handle" cx="-10" cy="-10" r="1.6"/>
+      <circle id="h2" class="handle" cx="-10" cy="-10" r="1.6"/>
       <text id="midlabel" class="label" x="0" y="0">0.00 mm</text>
     </svg>
   </main>
@@ -210,10 +210,10 @@
     const stage = document.getElementById('stage');
     const line  = document.getElementById('line');
     const ghost = document.getElementById('ghost');
-    const cap1  = document.getElementById('cap1');
-    const cap2  = document.getElementById('cap2');
+    const h1  = document.getElementById('h1');
+    const h2  = document.getElementById('h2');
     const readout = document.getElementById('readout');
-    const pxInfo  = document.getElementById('pxinfo');
+    const pxInfo  = document.getElementById('pxinfo');  = document.getElementById('pxinfo');
 
     let a = null, b = null; // points in CSS pixels {x,y}
 
@@ -228,8 +228,8 @@
         line.setAttribute('x2',0); line.setAttribute('y2',0);
         ghost.setAttribute('x1',0); ghost.setAttribute('y1',0);
         ghost.setAttribute('x2',0); ghost.setAttribute('y2',0);
-        cap1.setAttribute('x1',0); cap1.setAttribute('y1',0); cap1.setAttribute('x2',0); cap1.setAttribute('y2',0);
-        cap2.setAttribute('x1',0); cap2.setAttribute('y1',0); cap2.setAttribute('x2',0); cap2.setAttribute('y2',0);
+        h1.setAttribute('cx',-10); h1.setAttribute('cy',-10);
+        h2.setAttribute('cx',-10); h2.setAttribute('cy',-10);
         readout.querySelector('.big').textContent = `0.00 mm | 0.000 in`;
         pxInfo.textContent = `0 px`;
         return;
@@ -242,14 +242,9 @@
       ghost.setAttribute('x1', vb1.x); ghost.setAttribute('y1', vb1.y);
       ghost.setAttribute('x2', vb2.x); ghost.setAttribute('y2', vb2.y);
 
-      // Perpendicular end caps (ticks)
-      const dx = vb2.x - vb1.x, dy = vb2.y - vb1.y; const mag = Math.hypot(dx,dy) || 1;
-      const nx = -dy / mag, ny = dx / mag; // unit perpendicular
-      const len = 1.0; // tick length in viewBox units (~1% of side)
-      cap1.setAttribute('x1', vb1.x - nx*len/2); cap1.setAttribute('y1', vb1.y - ny*len/2);
-      cap1.setAttribute('x2', vb1.x + nx*len/2); cap1.setAttribute('y2', vb1.y + ny*len/2);
-      cap2.setAttribute('x1', vb2.x - nx*len/2); cap2.setAttribute('y1', vb2.y - ny*len/2);
-      cap2.setAttribute('x2', vb2.x + nx*len/2); cap2.setAttribute('y2', vb2.y + ny*len/2);
+      // Endpoint circles (handles)
+      h1.setAttribute('cx', vb1.x); h1.setAttribute('cy', vb1.y);
+      h2.setAttribute('cx', vb2.x); h2.setAttribute('cy', vb2.y);
 
       // Numeric readout
       const dxCss = b.x - a.x, dyCss = b.y - a.y;
