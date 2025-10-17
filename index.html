@@ -6,40 +6,45 @@
 <title>This Big — by OPULENT HARDWARE</title>
 <style>
   :root{
-    /* Fixed light theme */
-    --paper:#e9f5ef;            /* mint-green paper (no dots) */
-    --paper-band:#e9f5ef;       /* same as paper (no visible band) */
-    --ink:#17221c;
-    --muted:#5a6d63;
-    --accent:#18a34a;           /* measure color */
+    /* Light engineering paper theme — fixed light scheme */
+    --paper:#eef7f1;            /* page base (light mint) */
+    --ink:#1f2a28;              /* primary text (dark) */
+    --muted:#5c726a;            /* secondary text */
+    --accent:#18a34a;           /* highlight (green) */
+    --dot:#9fc9b3;              /* paper dots (visible on light) */
+    --grid:#e6f1ea;             /* top margin band */
     --shadow:rgba(16,24,16,.18);
-    --card:#ffffff;
-    color-scheme: light;        /* don’t follow OS dark mode */
+    --card:#ffffff;             /* panels/cards */
+    color-scheme: light;        /* prevent OS/browser dark theming */
   }
-  *{ box-sizing:border-box }
+  *{box-sizing:border-box}
   html,body{
     height:100%; margin:0; background:var(--paper); color:var(--ink);
-    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Inter,Roboto,"Helvetica Neue",Arial;
+    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Inter,Roboto,"Helvetica Neue",Arial
   }
 
-  /* Background layer (no dots, top band same color so it disappears) */
+  /* Engineering dotted paper background (above body; doesn't eat touches) */
   .paper{
     position:fixed; inset:0; z-index:0; pointer-events:none;
-    background: linear-gradient(var(--paper-band),var(--paper-band)) top/100% 80px no-repeat;
+    background:
+      linear-gradient(var(--grid),var(--grid)) top/100% 88px no-repeat,
+      radial-gradient(circle at center, var(--dot) 1.6px, transparent 1.6px) 0 88px/14px 14px repeat;
   }
 
-  /* Header */
+  /* Top bar */
   .topbar{
     position:fixed; left:0; right:0; top:0; z-index:2;
     min-height:64px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
     padding:10px 12px; background:#fff; border-bottom:1px solid rgba(0,0,0,.06);
     box-shadow:0 6px 18px var(--shadow);
   }
-  .brand .title{font-weight:800; font-size:clamp(16px,4.6vw,20px)}
+  .brand .title{font-weight:800; font-size:clamp(16px,4.6vw,20px); letter-spacing:.2px}
   .brand .byline{font-size:clamp(10px,2.6vw,12px); color:var(--muted); margin-top:2px}
 
   .reading{font-variant-numeric:tabular-nums lining-nums; letter-spacing:.02em}
-  .reading .big{font-size:clamp(16px,6.4vw,28px); font-weight:800; color:var(--accent); white-space:nowrap}
+  .reading .big{
+    font-size:clamp(16px,6.4vw,28px); font-weight:800; color:var(--accent); white-space:nowrap
+  }
   .reading .sub{font-size:clamp(10px,2.8vw,13px); color:var(--muted)}
   .reading .sep{color:#98a6a0}
   .spacer{flex:1}
@@ -56,12 +61,12 @@
     background:var(--card); color:var(--ink); box-shadow:0 6px 16px var(--shadow)
   }
 
-  /* Measuring stage */
-  .stage{position:fixed; inset:80px 0 0 0; touch-action:none; z-index:1}
-  @media (max-width:600px){ .stage{ inset:70px 0 0 0; } }
+  /* Measuring stage (above dots, below header) */
+  .stage{position:fixed; inset:88px 0 0 0; touch-action:none; z-index:1}
+  @media (max-width:600px){ .stage{ inset:72px 0 0 0; } }
   svg{position:absolute; inset:0; width:100%; height:100%; display:block; overflow:visible; background:transparent}
 
-  /* Instruction chips */
+  /* Instruction chips (stay on screen) */
   .legend{
     position:fixed; left:16px; right:16px;
     bottom:calc(env(safe-area-inset-bottom,0px) + 12px);
@@ -73,7 +78,7 @@
     font-size:clamp(10px,2.8vw,12px); box-shadow:0 4px 10px var(--shadow)
   }
 
-  /* Modal — always light */
+  /* Calibration modal (forces light controls) */
   dialog{
     border:0; border-radius:16px; background:#fff; color:var(--ink);
     box-shadow:0 20px 60px var(--shadow); width:min(560px,92vw); color-scheme:light
@@ -96,8 +101,8 @@
   /* Measure visuals */
   .measure-line{stroke:var(--accent); stroke-width:2; stroke-linecap:round; vector-effect:non-scaling-stroke}
   .ghost{stroke:var(--accent); stroke-opacity:.35; stroke-dasharray:4 6; vector-effect:non-scaling-stroke}
-  .handle{fill:#ffffff; stroke:var(--accent); stroke-width:2.5; opacity:.98}
-  .label{display:none} /* no mid-paper label */
+  .endcap{stroke:var(--accent); stroke-width:2.5; stroke-linecap:round; vector-effect:non-scaling-stroke}
+  .label{display:none} /* no on-paper label, per request */
 </style>
 </head>
 <body>
@@ -119,11 +124,14 @@
 
   <main class="stage" id="stage" aria-label="Touch area for 2-finger measurement">
     <svg id="overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <line   id="line"  class="measure-line" x1="0" y1="0" x2="0" y2="0"/>
-      <line   id="ghost" class="measure-line ghost" x1="0" y1="0" x2="0" y2="0"/>
-      <circle id="h1" class="handle" cx="-10" cy="-10" r="1.8"/>
-      <circle id="h2" class="handle" cx="-10" cy="-10" r="1.8"/>
-      <text   id="midlabel" class="label" x="0" y="0">0.00 mm</text>
+      <!-- Main measure line + faint ghost -->
+      <line id="line"  class="measure-line" x1="0" y1="0" x2="0" y2="0"/>
+      <line id="ghost" class="measure-line ghost" x1="0" y1="0" x2="0" y2="0"/>
+      <!-- Perpendicular tiny tick caps at each end -->
+      <line id="cap1" class="endcap" x1="0" y1="0" x2="0" y2="0"/>
+      <line id="cap2" class="endcap" x1="0" y1="0" x2="0" y2="0"/>
+      <!-- Hidden (no on-paper label) -->
+      <text id="midlabel" class="label" x="0" y="0">0.00 mm</text>
     </svg>
   </main>
 
@@ -136,7 +144,6 @@
     <form method="dialog" class="modal">
       <h2>Calibration</h2>
       <div class="grid">
-        <!-- LEFT: Native (device) -->
         <div>
           <label>Display diagonal (inches)</label>
           <input type="number" step="0.01" id="diagIn" />
@@ -149,7 +156,6 @@
           <label>Native height (pixels)</label>
           <input type="number" step="1" id="hIn" />
         </div>
-        <!-- RIGHT: Measured CSS / Browser -->
         <div>
           <label>Measured CSS width (screen.width)</label>
           <input type="number" id="cssW" disabled />
@@ -184,14 +190,14 @@
     try{
       const cssW = window.screen.width;   // CSS px
       const cssH = window.screen.height;  // CSS px
-      const dpr  = window.devicePixelRatio || 1;
+      const dpr = window.devicePixelRatio || 1;
       const devW = Math.round(cssW * dpr);
       const devH = Math.round(cssH * dpr);
-      if (devW && devH){ S.nativeW = devW; S.nativeH = devH; }
+      if(devW && devH){ S.nativeW = devW; S.nativeH = devH; }
       S.dpr = dpr;
     }catch(e){}
     const saved = localStorage.getItem('twofinger.calibration');
-    if (saved) Object.assign(S, JSON.parse(saved));
+    if(saved){ Object.assign(S, JSON.parse(saved)); }
   }
   initGuesses();
 
@@ -201,21 +207,22 @@
     const diagPx = Math.hypot(S.nativeW, S.nativeH);
     return diagPx / S.diagIn; // px/in
   }
+
   function cssPxPerMM(){ // CSS px per mm
     const ppiDev = ppiDevice();
     return (ppiDev / S.dpr) / 25.4; // (device px / dpr) / 25.4
   }
 
-  // --- Settings dialog wiring ---
-  const dlg   = document.getElementById('settings');
+  // --- UI wiring for settings ---
+  const dlg = document.getElementById('settings');
   const diagIn = document.getElementById('diagIn');
-  const wIn   = document.getElementById('wIn');
-  const hIn   = document.getElementById('hIn');
-  const cssW  = document.getElementById('cssW');
-  const cssH  = document.getElementById('cssH');
+  const wIn = document.getElementById('wIn');
+  const hIn = document.getElementById('hIn');
+  const cssW = document.getElementById('cssW');
+  const cssH = document.getElementById('cssH');
   const dprIn = document.getElementById('dprIn');
 
-  document.getElementById('openSettings').addEventListener('click', ()=>{
+  function openSettings(){
     diagIn.value = S.diagIn;
     wIn.value = S.nativeW;
     hIn.value = S.nativeH;
@@ -223,18 +230,19 @@
     cssH.value = window.screen.height;
     dprIn.value = S.dpr;
     dlg.showModal();
-  });
+  }
 
-  document.getElementById('save').addEventListener('click', (e)=>{
-    e.preventDefault();
+  function applySettings(){
     S.diagIn  = parseFloat(diagIn.value) || S.diagIn;
     S.nativeW = parseInt(wIn.value, 10) || S.nativeW;
     S.nativeH = parseInt(hIn.value, 10) || S.nativeH;
     save();
     updateSystemBadge();
     render();
-    dlg.close();
-  });
+  }
+
+  document.getElementById('openSettings').addEventListener('click', openSettings);
+  document.getElementById('save').addEventListener('click', (e)=>{ e.preventDefault(); applySettings(); dlg.close();});
 
   function updateSystemBadge(){
     document.getElementById('dpr').textContent = S.dpr.toFixed(2);
@@ -243,11 +251,11 @@
   updateSystemBadge();
 
   // --- Measurement engine ---
-  const stage   = document.getElementById('stage');
-  const line    = document.getElementById('line');
-  const ghost   = document.getElementById('ghost');
-  const h1      = document.getElementById('h1');
-  const h2      = document.getElementById('h2');
+  const stage = document.getElementById('stage');
+  const line  = document.getElementById('line');
+  const ghost = document.getElementById('ghost');
+  const cap1  = document.getElementById('cap1');
+  const cap2  = document.getElementById('cap2');
   const readout = document.getElementById('readout');
   const pxInfo  = document.getElementById('pxinfo');
 
@@ -264,8 +272,8 @@
       line.setAttribute('x2',0); line.setAttribute('y2',0);
       ghost.setAttribute('x1',0); ghost.setAttribute('y1',0);
       ghost.setAttribute('x2',0); ghost.setAttribute('y2',0);
-      h1.setAttribute('cx',-10); h1.setAttribute('cy',-10);
-      h2.setAttribute('cx',-10); h2.setAttribute('cy',-10);
+      cap1.setAttribute('x1',0); cap1.setAttribute('y1',0); cap1.setAttribute('x2',0); cap1.setAttribute('y2',0);
+      cap2.setAttribute('x1',0); cap2.setAttribute('y1',0); cap2.setAttribute('x2',0); cap2.setAttribute('y2',0);
       readout.querySelector('.big').textContent = `0.00 mm | 0.000 in`;
       pxInfo.textContent = `0 px`;
       return;
@@ -278,9 +286,15 @@
     ghost.setAttribute('x1', vb1.x); ghost.setAttribute('y1', vb1.y);
     ghost.setAttribute('x2', vb2.x); ghost.setAttribute('y2', vb2.y);
 
-    // circular handles
-    h1.setAttribute('cx', vb1.x); h1.setAttribute('cy', vb1.y);
-    h2.setAttribute('cx', vb2.x); h2.setAttribute('cy', vb2.y);
+    // Draw perpendicular end caps (ticks) at each end
+    const dx = vb2.x - vb1.x, dy = vb2.y - vb1.y;
+    const mag = Math.hypot(dx,dy) || 1;
+    const nx = -dy / mag, ny = dx / mag; // unit perpendicular
+    const len = 1.0; // tick length in viewBox units (~1% of side). Tune if desired.
+    cap1.setAttribute('x1', vb1.x - nx*len/2); cap1.setAttribute('y1', vb1.y - ny*len/2);
+    cap1.setAttribute('x2', vb1.x + nx*len/2); cap1.setAttribute('y2', vb1.y + ny*len/2);
+    cap2.setAttribute('x1', vb2.x - nx*len/2); cap2.setAttribute('y1', vb2.y - ny*len/2);
+    cap2.setAttribute('x2', vb2.x + nx*len/2); cap2.setAttribute('y2', vb2.y + ny*len/2);
 
     // Numeric readout
     const dxCss = b.x - a.x, dyCss = b.y - a.y;
@@ -328,6 +342,7 @@
   window.addEventListener('mousemove', (e)=>{ if(!dragging) return; b = {x:e.clientX,y:e.clientY}; updateGraphics(); });
   window.addEventListener('mouseup', ()=> dragging=false);
 
+  // Render once + keep viewBox mapping fresh
   function render(){ updateGraphics(); }
   render();
   new ResizeObserver(()=> updateGraphics()).observe(stage);
