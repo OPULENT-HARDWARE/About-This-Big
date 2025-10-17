@@ -13,7 +13,7 @@
     --accent:#18a34a;           /* measure color */
     --shadow:rgba(16,24,16,.18);
     --card:#ffffff;
-    color-scheme: light;        /* don’t follow OS dark mode */
+    color-scheme: light;        /* don’t follow OS/Browser dark mode */
   }
   *{ box-sizing:border-box }
   html,body{
@@ -49,7 +49,7 @@
     background:var(--card); color:var(--ink); box-shadow:0 6px 16px var(--shadow)
   }
 
-  /* Handle-size slider */
+  /* Endpoint-size slider */
   .control{
     display:flex; align-items:center; gap:8px; padding:.35rem .6rem;
     border-radius:999px; background:#fff; border:1px solid rgba(0,0,0,.12);
@@ -78,21 +78,22 @@
   /* Modal — always light */
   dialog{
     border:0; border-radius:16px; background:#fff; color:var(--ink);
-    box-shadow:0 20px 60px var(--shadow); width:min(680px,92vw); color-scheme:light
+    box-shadow:0 20px 60px var(--shadow); width:min(720px,92vw); color-scheme:light
   }
   dialog::backdrop{background:rgba(0,0,0,.35)}
   .modal{padding:18px}
   .modal h2{margin:0 0 14px 0}
-  /* Two-column with explicit section headers */
+
+  /* Two-column grid with paired rows */
   .grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:16px 18px;
-    align-items:start;
+    display:grid; grid-template-columns:1fr 1fr; gap:14px 18px; align-items:start;
   }
-  .section-title{font-weight:700; color:#2f4a3e; margin-bottom:6px}
-  .col{display:flex; flex-direction:column; gap:12px}
+  .row{display:contents;} /* allows label+input pairs to align in each column */
+
+  .col-title{grid-column:1 / -1; font-weight:700; color:#2f4a3e; margin:6px 0 2px}
+
   label{font-size:12px; color:var(--muted)}
+  .field{display:flex; flex-direction:column; gap:6px}
   input[type="number"], input[type="text"]{
     appearance:none; background:#fff !important; color:#0f1a17;
     border:1px solid #cfdad3; border-radius:10px; padding:.6rem .7rem;
@@ -126,8 +127,9 @@
 
     <div class="control" aria-label="Endpoint size control">
       <span>Endpoint</span>
-      <input id="handleSize" type="range" min="0.5" max="1.5" value="1" step="0.05" />
-      <span id="handleSizeVal">100%</span>
+      <!-- default 50% -->
+      <input id="handleSize" type="range" min="0.5" max="1.5" value="0.5" step="0.05" />
+      <span id="handleSizeVal">50%</span>
     </div>
 
     <div class="pill" id="sys">DPR: <span id="dpr"></span> · Native: <span id="cssdev"></span></div>
@@ -138,8 +140,9 @@
     <svg id="overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
       <line   id="line"  class="measure-line" x1="0" y1="0" x2="0" y2="0"/>
       <line   id="ghost" class="measure-line ghost" x1="0" y1="0" x2="0" y2="0"/>
-      <circle id="h1" class="handle" cx="-10" cy="-10" r="1.8"/>
-      <circle id="h2" class="handle" cx="-10" cy="-10" r="1.8"/>
+      <!-- Ellipses sized in viewBox units but computed from pixel radius so they render as true circles -->
+      <ellipse id="h1" class="handle" cx="-10" cy="-10" rx="1" ry="1"/>
+      <ellipse id="h2" class="handle" cx="-10" cy="-10" rx="1" ry="1"/>
       <text   id="midlabel" class="label" x="0" y="0">0.00 mm</text>
     </svg>
   </main>
@@ -152,38 +155,41 @@
   <dialog id="settings">
     <form method="dialog" class="modal">
       <h2>Calibration</h2>
+
       <div class="grid">
-        <!-- LEFT: Native (device) -->
-        <div class="col">
-          <div class="section-title">Native (device)</div>
-          <div>
+        <!-- Diagonal + DPR row (spans both columns) -->
+        <div class="row">
+          <div class="field" style="grid-column:1">
             <label>Display diagonal (inches)</label>
             <input type="number" step="0.01" id="diagIn" />
           </div>
-          <div>
-            <label>Native width (pixels)</label>
-            <input type="number" step="1" id="wIn" />
-          </div>
-          <div>
-            <label>Native height (pixels)</label>
-            <input type="number" step="1" id="hIn" />
+          <div class="field" style="grid-column:2">
+            <label>Device Pixel Ratio (browser)</label>
+            <input type="number" id="dprIn" disabled />
           </div>
         </div>
 
-        <!-- RIGHT: Measured CSS / Browser -->
-        <div class="col">
-          <div class="section-title">Measured (browser)</div>
-          <div>
-            <label>Measured CSS width (screen.width)</label>
+        <!-- Width row: Native (left) | CSS (right) -->
+        <div class="row">
+          <div class="field" style="grid-column:1">
+            <label>Native width (pixels)</label>
+            <input type="number" step="1" id="wIn" />
+          </div>
+          <div class="field" style="grid-column:2">
+            <label>CSS width (screen.width)</label>
             <input type="number" id="cssW" disabled />
           </div>
-          <div>
-            <label>Measured CSS height (screen.height)</label>
-            <input type="number" id="cssH" disabled />
+        </div>
+
+        <!-- Height row: Native (left) | CSS (right) -->
+        <div class="row">
+          <div class="field" style="grid-column:1">
+            <label>Native height (pixels)</label>
+            <input type="number" step="1" id="hIn" />
           </div>
-          <div>
-            <label>Device Pixel Ratio (browser)</label>
-            <input type="number" id="dprIn" disabled />
+          <div class="field" style="grid-column:2">
+            <label>CSS height (screen.height)</label>
+            <input type="number" id="cssH" disabled />
           </div>
         </div>
       </div>
@@ -205,8 +211,8 @@
   };
 
   // Handle size model
-  const HANDLE_R_DEFAULT = 1.8;      // viewBox units (1.8% of side)
-  let handleScale = 1.0;             // slider multiplier (0.5–1.5)
+  const HANDLE_R_BASE_PX = 10;   // base radius in *screen pixels*
+  let handleScale = 0.5;         // default 50%
 
   // Initialize with best guesses + persisted values
   function initGuesses(){
@@ -234,28 +240,28 @@
 
   // --- Settings dialog wiring ---
   const dlg   = document.getElementById('settings');
-  const diagIn = document.getElementById('diagIn');
-  const wIn   = document.getElementById('wIn');
-  const hIn   = document.getElementById('hIn');
-  const cssW  = document.getElementById('cssW');
-  const cssH  = document.getElementById('cssH');
-  const dprIn = document.getElementById('dprIn');
+  const diagInEl = document.getElementById('diagIn');
+  const wInEl   = document.getElementById('wIn');
+  const hInEl   = document.getElementById('hIn');
+  const cssWEl  = document.getElementById('cssW');
+  const cssHEl  = document.getElementById('cssH');
+  const dprInEl = document.getElementById('dprIn');
 
   document.getElementById('openSettings').addEventListener('click', ()=>{
-    diagIn.value = S.diagIn;
-    wIn.value = S.nativeW;
-    hIn.value = S.nativeH;
-    cssW.value = window.screen.width;
-    cssH.value = window.screen.height;
-    dprIn.value = S.dpr;
+    diagInEl.value = S.diagIn;
+    wInEl.value = S.nativeW;
+    hInEl.value = S.nativeH;
+    cssWEl.value = window.screen.width;
+    cssHEl.value = window.screen.height;
+    dprInEl.value = S.dpr;
     dlg.showModal();
   });
 
   document.getElementById('save').addEventListener('click', (e)=>{
     e.preventDefault();
-    S.diagIn  = parseFloat(diagIn.value) || S.diagIn;
-    S.nativeW = parseInt(wIn.value, 10) || S.nativeW;
-    S.nativeH = parseInt(hIn.value, 10) || S.nativeH;
+    S.diagIn  = parseFloat(diagInEl.value) || S.diagIn;
+    S.nativeW = parseInt(wInEl.value, 10) || S.nativeW;
+    S.nativeH = parseInt(hInEl.value, 10) || S.nativeH;
     save();
     updateSystemBadge();
     render();
@@ -296,10 +302,20 @@
     return { x: (x - r.left) / r.width * 100, y: (y - r.top) / r.height * 100 };
   }
 
+  // Convert a *pixel* radius to viewBox units so circles remain circular even with preserveAspectRatio="none"
+  function pixelRadiusToVB(rPx){
+    const r = stage.getBoundingClientRect();
+    return {
+      rx: (rPx / r.width)  * 100,
+      ry: (rPx / r.height) * 100
+    };
+  }
+
   function setHandleRadius(){
-    const r = HANDLE_R_DEFAULT * handleScale;
-    h1.setAttribute('r', r);
-    h2.setAttribute('r', r);
+    const rPx = HANDLE_R_BASE_PX * handleScale;
+    const {rx, ry} = pixelRadiusToVB(rPx);
+    h1.setAttribute('rx', rx); h1.setAttribute('ry', ry);
+    h2.setAttribute('rx', rx); h2.setAttribute('ry', ry);
   }
 
   function updateGraphics(){
@@ -324,13 +340,13 @@
     ghost.setAttribute('x1', vb1.x); ghost.setAttribute('y1', vb1.y);
     ghost.setAttribute('x2', vb2.x); ghost.setAttribute('y2', vb2.y);
 
-    // circular handles
+    // circular endpoints (ellipses with rx/ry computed from px radius)
     h1.setAttribute('cx', vb1.x); h1.setAttribute('cy', vb1.y);
     h2.setAttribute('cx', vb2.x); h2.setAttribute('cy', vb2.y);
 
     // Numeric readout
     const dxCss = b.x - a.x, dyCss = b.y - a.y;
-    const distPx = Math.hypot(dxCss, dyCss);          // CSS px
+    const distPx = Math.hypot(dxCss, dyCss);
     const pxPerMM = cssPxPerMM();
     const mm = distPx / pxPerMM;
     const inches = mm / 25.4;
