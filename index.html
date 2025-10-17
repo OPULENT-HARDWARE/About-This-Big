@@ -1,95 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-  <title>Two‑Finger Ruler · Engineering Dot Paper</title>
-  <style>
-    :root{
-      /* Light engineering paper theme — higher contrast */
-      --paper:#eef7f1;            /* page base (light mint) */
-      --ink:#1f2a28;              /* primary text (dark) */
-      --muted:#5c726a;            /* secondary text */
-      --accent:#18a34a;           /* highlight (green) */
-      --accent-2:#2aa7ff;         /* secondary accent */
-      --dot:#c7e0d2;              /* paper dots */
-      --grid:#e6f1ea;             /* top margin band */
-      --shadow:rgba(16,24,16,.18);
-      --card:#ffffff;             /* panels/cards */
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:var(--paper);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Inter,Roboto,"Helvetica Neue",Arial}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<title>This Big — by OPULENT HARDWARE</title>
+<style>
+  :root{
+    /* Light engineering paper theme — fixed light scheme */
+    --paper:#eef7f1;            /* page base (light mint) */
+    --ink:#1f2a28;              /* primary text (dark) */
+    --muted:#5c726a;            /* secondary text */
+    --accent:#18a34a;           /* highlight (green) */
+    --dot:#9fc9b3;              /* paper dots (visible on light) */
+    --grid:#e6f1ea;             /* top margin band */
+    --shadow:rgba(16,24,16,.18);
+    --card:#ffffff;             /* panels/cards */
+    color-scheme: light;        /* prevent OS/browser dark theming */
+  }
+  *{box-sizing:border-box}
+  html,body{
+    height:100%; margin:0; background:var(--paper); color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Inter,Roboto,"Helvetica Neue",Arial
+  }
 
-    /* Engineering dotted paper background */
-    .paper{position:fixed;inset:0;z-index:-1;background:
-        linear-gradient(var(--grid),var(--grid)) top/100% 88px no-repeat,
-        radial-gradient(circle at center, var(--dot) 1.2px, transparent 1.6px) 0 88px/12px 12px repeat;}
-    body{background:var(--paper);}
+  /* Engineering dotted paper background (above body; doesn't eat touches) */
+  .paper{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      linear-gradient(var(--grid),var(--grid)) top/100% 88px no-repeat,
+      radial-gradient(circle at center, var(--dot) 1.6px, transparent 1.6px) 0 88px/14px 14px repeat;
+  }
 
-    .topbar{position:fixed;left:0;right:0;top:0;min-height:64px;display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.06);background:#ffffff;box-shadow:0 6px 18px var(--shadow);z-index:5;flex-wrap:wrap}
-    .brand .title{font-weight:800;font-size:clamp(16px,4.6vw,20px);letter-spacing:.2px;color:var(--ink)}
-    .brand .byline{font-size:clamp(10px,2.6vw,12px);color:var(--muted);margin-top:2px}
-    .reading{font-variant-numeric:tabular-nums lining-nums;letter-spacing:.02em}
-    .reading .big{font-size:clamp(16px,6.4vw,28px);font-weight:800;color:var(--accent);white-space:nowrap}
-    .reading .sub{font-size:clamp(10px,2.8vw,13px);color:var(--muted)}
-    .reading .sep{color:#98a6a0}
-    .brand .title{font-weight:800;font-size:20px;letter-spacing:.2px;color:var(--ink)}
-    .brand .byline{font-size:12px;color:var(--muted);margin-top:2px}
-    .reading{font-variant-numeric:tabular-nums lining-nums;letter-spacing:.02em}
-    .reading .big{font-size:32px;font-weight:800;color:var(--accent)}
-    .reading .sub{font-size:13px;color:var(--muted)}
-    .reading .sep{color:#98a6a0}{position:fixed;left:0;right:0;top:0;height:88px;display:flex;align-items:center;gap:16px;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.04);background:linear-gradient(to bottom, rgba(10,14,20,.6), rgba(10,14,20,.25));backdrop-filter:blur(6px)}
-    .reading{font-variant-numeric:tabular-nums lining-nums;letter-spacing:.02em}
-    .reading .big{font-size:34px;font-weight:800;color:var(--accent)}
-    .reading .sub{font-size:14px;color:var(--muted)}
+  /* Top bar */
+  .topbar{
+    position:fixed; left:0; right:0; top:0; z-index:2;
+    min-height:64px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    padding:10px 12px; background:#fff; border-bottom:1px solid rgba(0,0,0,.06);
+    box-shadow:0 6px 18px var(--shadow);
+  }
+  .brand .title{font-weight:800; font-size:clamp(16px,4.6vw,20px); letter-spacing:.2px}
+  .brand .byline{font-size:clamp(10px,2.6vw,12px); color:var(--muted); margin-top:2px}
 
-    .spacer{flex:1}
+  .reading{font-variant-numeric:tabular-nums lining-nums; letter-spacing:.02em}
+  .reading .big{
+    font-size:clamp(16px,6.4vw,28px); font-weight:800; color:var(--accent); white-space:nowrap
+  }
+  .reading .sub{font-size:clamp(10px,2.8vw,13px); color:var(--muted)}
+  .reading .sep{color:#98a6a0}
+  .spacer{flex:1}
 
-    .pill{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .6rem;border-radius:999px;background:var(--card);border:1px solid rgba(0,0,0,.12);box-shadow:0 6px 16px var(--shadow);font-size:clamp(10px,2.8vw,12px);color:var(--muted);white-space:nowrap}
+  .pill{
+    display:inline-flex; align-items:center; gap:.4rem; white-space:nowrap;
+    padding:.4rem .6rem; border-radius:999px; background:var(--card);
+    border:1px solid rgba(0,0,0,.12); box-shadow:0 6px 16px var(--shadow);
+    font-size:clamp(10px,2.8vw,12px); color:var(--muted)
+  }
+  .gear{
+    cursor:pointer; border:1px solid rgba(0,0,0,.12);
+    width:38px; height:38px; border-radius:999px; display:grid; place-items:center;
+    background:var(--card); color:var(--ink); box-shadow:0 6px 16px var(--shadow)
+  }
 
-    .gear{cursor:pointer;border:0;background:var(--card);border:1px solid rgba(0,0,0,.12);width:38px;height:38px;border-radius:999px;display:grid;place-items:center;color:var(--ink);box-shadow:0 6px 16px var(--shadow)}
+  /* Measuring stage (above dots, below header) */
+  .stage{position:fixed; inset:88px 0 0 0; touch-action:none; z-index:1}
+  @media (max-width:600px){ .stage{ inset:72px 0 0 0; } }
+  svg{position:absolute; inset:0; width:100%; height:100%; display:block; overflow:visible; background:transparent}
 
-    .stage{position:fixed;inset:88px 0 0 0;touch-action:none}
-    @media (max-width:600px){ .stage{ inset:72px 0 0 0; } }
-    svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible;background:transparent}
-    svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible;background:transparent}
-    svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+  /* Instruction chips (stay on screen) */
+  .legend{
+    position:fixed; left:16px; right:16px;
+    bottom:calc(env(safe-area-inset-bottom,0px) + 12px);
+    display:flex; gap:8px; flex-wrap:wrap; z-index:2
+  }
+  .legend .tag{
+    padding:.35rem .6rem; border-radius:999px; background:var(--card);
+    border:1px solid rgba(0,0,0,.12); color:var(--muted);
+    font-size:clamp(10px,2.8vw,12px); box-shadow:0 4px 10px var(--shadow)
+  }
 
-    .legend{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;gap:8px;flex-wrap:wrap;z-index:6}
-    .legend .tag{padding:.35rem .6rem;border-radius:999px;background:var(--card);border:1px solid rgba(0,0,0,.08);color:var(--muted);font-size:clamp(10px,2.8vw,12px);box-shadow:0 4px 10px var(--shadow)}
-    .legend .tag{padding:.35rem .6rem;border-radius:999px;background:var(--card);border:1px solid rgba(255,255,255,.06);color:var(--muted);font-size:12px}
+  /* Calibration modal (forces light controls) */
+  dialog{
+    border:0; border-radius:16px; background:#fff; color:var(--ink);
+    box-shadow:0 20px 60px var(--shadow); width:min(560px,92vw); color-scheme:light
+  }
+  dialog::backdrop{background:rgba(0,0,0,.35)}
+  .modal{padding:18px}
+  .modal h2{margin:0 0 10px 0}
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  label{font-size:12px; color:var(--muted)}
+  input[type="number"], input[type="text"], select, button{
+    appearance:none; background:#fff !important; color:#0f1a17;
+    border:1px solid #cfdad3; border-radius:10px; padding:.6rem .7rem;
+    box-shadow:inset 0 1px 0 rgba(0,0,0,.02)
+  }
+  input:focus, select:focus, button:focus{outline:2px solid rgba(24,163,74,.35); outline-offset:2px}
+  .actions{display:flex; justify-content:flex-end; gap:10px; margin-top:12px}
+  .btn{border:1px solid #cfe3d7; border-radius:12px; padding:.6rem .9rem; background:#eff7f2; color:#0d2918; cursor:pointer; box-shadow:0 6px 16px var(--shadow); font-weight:700}
+  .btn.alt{background:#f7faf8; color:#24332e}
 
-    /* Modal */
-    dialog{border:0;border-radius:16px;background:#ffffff;color:var(--ink);box-shadow:0 20px 60px var(--shadow);width:min(560px,92vw)}
-    dialog::backdrop{background:rgba(0,0,0,.35);backdrop-filter:blur(2px)}
-    .modal{padding:18px 18px 16px 18px}
-    .modal h2{margin:0 0 10px 0}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    label{font-size:12px;color:var(--muted)}
-    input[type="number"], input[type="text"]{width:100%;padding:.6rem .7rem;border-radius:10px;background:#ffffff;border:1px solid #cfdad3;color:#14201d;box-shadow:inset 0 1px 0 rgba(0,0,0,.02)}
-    input:focus{outline:2px solid rgba(24,163,74,.35);outline-offset:2px}
-    .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
-    .btn{appearance:none;border:0;border-radius:12px;padding:.6rem .9rem;background:#eff7f2;color:#0d2918;border:1px solid #cfe3d7;cursor:pointer;box-shadow:0 6px 16px var(--shadow);font-weight:700}
-    .btn.alt{background:#f7faf8;color:#24332e}
-    dialog::backdrop{background:rgba(0,0,0,.5);backdrop-filter:blur(2px)}
-    .modal{padding:18px 18px 16px 18px}
-    .modal h2{margin:0 0 10px 0}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .row{display:flex;gap:10px}
-    label{font-size:12px;color:var(--muted)}
-    input[type="number"], input[type="text"]{width:100%;padding:.55rem .65rem;border-radius:10px;background:#0e1421;border:1px solid rgba(255,255,255,.08);color:var(--ink)}
-    .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
-    .btn{appearance:none;border:0;border-radius:12px;padding:.6rem .9rem;background:#172033;color:#e7eef8;cursor:pointer;box-shadow:0 6px 16px var(--shadow), inset 0 1px 0 rgba(255,255,255,.05);font-weight:700}
-    .btn.alt{background:#0f1626}
-
-    .hint{position:fixed;right:16px;bottom:16px;font-size:12px;color:var(--muted)}
-
-    /* Handles */
-    .handle{fill:#ffffff;stroke:#18a34a;stroke-width:1}
-    .measure-line{stroke:var(--accent);stroke-width:2;stroke-linecap:round}
-    .ghost{stroke-dasharray:4 6;opacity:.6}
-    .label{display:none}
-  </style>
+  /* Measure visuals */
+  .measure-line{stroke:var(--accent); stroke-width:2; stroke-linecap:round; vector-effect:non-scaling-stroke}
+  .ghost{stroke:var(--accent); stroke-opacity:.35; stroke-dasharray:4 6; vector-effect:non-scaling-stroke}
+  .endcap{stroke:var(--accent); stroke-width:2.5; stroke-linecap:round; vector-effect:non-scaling-stroke}
+  .label{display:none} /* no on-paper label, per request */
+</style>
 </head>
 <body>
   <div class="paper" aria-hidden="true"></div>
@@ -104,23 +118,19 @@
       <div class="sub" id="pxinfo">0 px</div>
     </div>
     <div class="spacer"></div>
-    <div class="pill" id="sys">
-      DPR: <span id="dpr"></span> · Native: <span id="cssdev"></span>
-    </div>
+    <div class="pill" id="sys">DPR: <span id="dpr"></span> · Native: <span id="cssdev"></span></div>
     <button class="gear" id="openSettings" title="Calibration & settings" aria-label="Calibration & settings">⚙️</button>
   </header>
 
-  <main class="stage" id="stage" aria-label="Touch area for 2‑finger measurement">
+  <main class="stage" id="stage" aria-label="Touch area for 2-finger measurement">
     <svg id="overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <defs>
-        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)" />
-        </marker>
-      </defs>
-      <line id="line" class="measure-line" x1="0" y1="0" x2="0" y2="0" marker-start="url(#arrow)" marker-end="url(#arrow)" vector-effect="non-scaling-stroke"/>
-      <line id="ghost" class="measure-line ghost" x1="0" y1="0" x2="0" y2="0" />
-      <circle id="p1" class="handle" cx="-10" cy="-10" r="2.2" />
-      <circle id="p2" class="handle" cx="-10" cy="-10" r="2.2" />
+      <!-- Main measure line + faint ghost -->
+      <line id="line"  class="measure-line" x1="0" y1="0" x2="0" y2="0"/>
+      <line id="ghost" class="measure-line ghost" x1="0" y1="0" x2="0" y2="0"/>
+      <!-- Perpendicular tiny tick caps at each end -->
+      <line id="cap1" class="endcap" x1="0" y1="0" x2="0" y2="0"/>
+      <line id="cap2" class="endcap" x1="0" y1="0" x2="0" y2="0"/>
+      <!-- Hidden (no on-paper label) -->
       <text id="midlabel" class="label" x="0" y="0">0.00 mm</text>
     </svg>
   </main>
@@ -129,8 +139,6 @@
     <div class="tag">Touch with two fingers to measure</div>
     <div class="tag">Mouse: click once, drag to place second point</div>
   </div>
-
-  <div class="hint">Tip: Calibrate with your display's diagonal size and native resolution for accurate real‑world units.</div>
 
   <dialog id="settings">
     <form method="dialog" class="modal">
@@ -168,181 +176,158 @@
     </form>
   </dialog>
 
-  <script>
-    // --- Calibration model ---
-    const S = {
-      diagIn: 15.6,          // inches (editable)
-      nativeW: 1920,         // device pixels (editable)
-      nativeH: 1080,         // device pixels (editable)
-      dpr: window.devicePixelRatio || 1,
-    };
+<script>
+  // --- Calibration model ---
+  const S = {
+    diagIn: 15.6,          // inches (editable)
+    nativeW: 1920,         // device pixels (editable)
+    nativeH: 1080,         // device pixels (editable)
+    dpr: window.devicePixelRatio || 1,
+  };
 
-    // Try initialize with best guesses from the environment
-    function initGuesses(){
-      try{
-        const cssW = window.screen.width;   // CSS px
-        const cssH = window.screen.height;  // CSS px
-        const dpr = window.devicePixelRatio || 1;
-        // device (physical) pixels — approximation
-        const devW = Math.round(cssW * dpr);
-        const devH = Math.round(cssH * dpr);
-        if(devW && devH){ S.nativeW = devW; S.nativeH = devH; }
-        S.dpr = dpr;
-      }catch(e){/* ignore */}
-      // load persisted
-      const saved = localStorage.getItem('twofinger.calibration');
-      if(saved){ Object.assign(S, JSON.parse(saved)); }
-    }
-    initGuesses();
+  // Initialize with best guesses + persisted values
+  function initGuesses(){
+    try{
+      const cssW = window.screen.width;   // CSS px
+      const cssH = window.screen.height;  // CSS px
+      const dpr = window.devicePixelRatio || 1;
+      const devW = Math.round(cssW * dpr);
+      const devH = Math.round(cssH * dpr);
+      if(devW && devH){ S.nativeW = devW; S.nativeH = devH; }
+      S.dpr = dpr;
+    }catch(e){}
+    const saved = localStorage.getItem('twofinger.calibration');
+    if(saved){ Object.assign(S, JSON.parse(saved)); }
+  }
+  initGuesses();
 
-    function save(){ localStorage.setItem('twofinger.calibration', JSON.stringify(S)); }
+  function save(){ localStorage.setItem('twofinger.calibration', JSON.stringify(S)); }
 
-    function ppiDevice(){ // device pixels per inch
-      const diagPx = Math.hypot(S.nativeW, S.nativeH);
-      return diagPx / S.diagIn; // px/in
-    }
+  function ppiDevice(){ // device pixels per inch
+    const diagPx = Math.hypot(S.nativeW, S.nativeH);
+    return diagPx / S.diagIn; // px/in
+  }
 
-    function cssPxPerMM(){ // CSS px per mm
-      const ppiDev = ppiDevice();
-      return (ppiDev / S.dpr) / 25.4; // (device px / dpr) / 25.4
-    }
+  function cssPxPerMM(){ // CSS px per mm
+    const ppiDev = ppiDevice();
+    return (ppiDev / S.dpr) / 25.4; // (device px / dpr) / 25.4
+  }
 
-    // --- UI wiring for settings ---
-    const dlg = document.getElementById('settings');
-    const diagIn = document.getElementById('diagIn');
-    const wIn = document.getElementById('wIn');
-    const hIn = document.getElementById('hIn');
-    const cssW = document.getElementById('cssW');
-    const cssH = document.getElementById('cssH');
-    const dprIn = document.getElementById('dprIn');
+  // --- UI wiring for settings ---
+  const dlg = document.getElementById('settings');
+  const diagIn = document.getElementById('diagIn');
+  const wIn = document.getElementById('wIn');
+  const hIn = document.getElementById('hIn');
+  const cssW = document.getElementById('cssW');
+  const cssH = document.getElementById('cssH');
+  const dprIn = document.getElementById('dprIn');
 
-    function openSettings(){
-      diagIn.value = S.diagIn;
-      wIn.value = S.nativeW;
-      hIn.value = S.nativeH;
-      cssW.value = window.screen.width;
-      cssH.value = window.screen.height;
-      dprIn.value = S.dpr;
-      dlg.showModal();
-    }
+  function openSettings(){
+    diagIn.value = S.diagIn;
+    wIn.value = S.nativeW;
+    hIn.value = S.nativeH;
+    cssW.value = window.screen.width;
+    cssH.value = window.screen.height;
+    dprIn.value = S.dpr;
+    dlg.showModal();
+  }
 
-    function applySettings(){
-      S.diagIn = parseFloat(diagIn.value) || S.diagIn;
-      S.nativeW = parseInt(wIn.value, 10) || S.nativeW;
-      S.nativeH = parseInt(hIn.value, 10) || S.nativeH;
-      save();
-      updateSystemBadge();
-      render();
-    }
-
-    document.getElementById('openSettings').addEventListener('click', openSettings);
-    document.getElementById('save').addEventListener('click', (e)=>{ e.preventDefault(); applySettings(); dlg.close();});
-
-    function updateSystemBadge(){
-      document.getElementById('dpr').textContent = S.dpr.toFixed(2);
-      document.getElementById('cssdev').textContent = `${S.nativeW}×${S.nativeH}`;
-    }
+  function applySettings(){
+    S.diagIn  = parseFloat(diagIn.value) || S.diagIn;
+    S.nativeW = parseInt(wIn.value, 10) || S.nativeW;
+    S.nativeH = parseInt(hIn.value, 10) || S.nativeH;
+    save();
     updateSystemBadge();
-
-    // --- Measurement engine ---
-    const stage = document.getElementById('stage');
-    const svg = document.getElementById('overlay');
-    const p1 = document.getElementById('p1');
-    const p2 = document.getElementById('p2');
-    const line = document.getElementById('line');
-    const ghost = document.getElementById('ghost');
-    const label = document.getElementById('midlabel');
-    const readout = document.getElementById('readout');
-    const pxInfo = document.getElementById('pxinfo');
-
-    let a = null, b = null; // points in CSS pixels {x,y}
-
-    function cssToViewBox(x, y){ // convert CSS px to viewBox (0..100)
-      const r = stage.getBoundingClientRect();
-      return {
-        x: (x - r.left) / r.width * 100,
-        y: (y - r.top)  / r.height * 100
-      };
-    }
-
-    function midpoint(p, q){ return { x:(p.x+q.x)/2, y:(p.y+q.y)/2 }; }
-
-    function updateGraphics(){
-      if(!a || !b){
-        p1.setAttribute('cx', -10); p1.setAttribute('cy', -10);
-        p2.setAttribute('cx', -10); p2.setAttribute('cy', -10);
-        line.setAttribute('x1', 0); line.setAttribute('y1', 0);
-        line.setAttribute('x2', 0); line.setAttribute('y2', 0);
-        label.setAttribute('x', 0); label.setAttribute('y', 0);
-        readout.querySelector('.big').textContent = `0.00 mm | 0.000 in`;
-        pxInfo.textContent = `0 px`;
-        return;
-      }
-      const vb1 = cssToViewBox(a.x, a.y);
-      const vb2 = cssToViewBox(b.x, b.y);
-      p1.setAttribute('cx', vb1.x); p1.setAttribute('cy', vb1.y);
-      p2.setAttribute('cx', vb2.x); p2.setAttribute('cy', vb2.y);
-      line.setAttribute('x1', vb1.x); line.setAttribute('y1', vb1.y);
-      line.setAttribute('x2', vb2.x); line.setAttribute('y2', vb2.y);
-      ghost.setAttribute('x1', vb1.x); ghost.setAttribute('y1', vb1.y);
-      ghost.setAttribute('x2', vb2.x); ghost.setAttribute('y2', vb2.y);
-
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const distPx = Math.hypot(dx, dy); // CSS px
-      const pxPerMM = cssPxPerMM();
-      const mm = distPx / pxPerMM;
-      const inches = mm / 25.4;
-      const mid = cssToViewBox((a.x+b.x)/2, (a.y+b.y)/2);
-      label.setAttribute('x', mid.x);
-      label.setAttribute('y', mid.y - 1.5);
-      label.textContent = `${mm.toFixed(2)} mm`;
-      readout.querySelector('.big').textContent = `${mm.toFixed(2)} mm | ${inches.toFixed(3)} in`;
-      pxInfo.textContent = `${distPx.toFixed(1)} px  ·  ${pxPerMM.toFixed(3)} px/mm`;
-    }
-
-    // Touch handling (two fingers)
-    let tId1 = null, tId2 = null;
-
-    function getPos(t){ return { x:t.clientX, y:t.clientY }; }
-
-    stage.addEventListener('touchstart', (e)=>{
-      e.preventDefault();
-      for(const t of e.changedTouches){
-        if(tId1===null){ tId1 = t.identifier; a = getPos(t); }
-        else if(tId2===null){ tId2 = t.identifier; b = getPos(t); }
-      }
-      updateGraphics();
-    }, {passive:false});
-
-    stage.addEventListener('touchmove', (e)=>{
-      e.preventDefault();
-      for(const t of e.changedTouches){
-        if(t.identifier===tId1) a = getPos(t);
-        if(t.identifier===tId2) b = getPos(t);
-      }
-      if(tId1!==null && tId2!==null) updateGraphics();
-    }, {passive:false});
-
-    stage.addEventListener('touchend', (e)=>{
-      for(const t of e.changedTouches){
-        if(t.identifier===tId1) tId1 = null;
-        if(t.identifier===tId2) tId2 = null;
-      }
-      if(tId1===null || tId2===null){ /* keep last reading */ }
-    });
-
-    // Mouse fallback: click to set first point, drag to set second
-    let dragging = false;
-    stage.addEventListener('mousedown', (e)=>{ a = {x:e.clientX,y:e.clientY}; b = {x:e.clientX,y:e.clientY}; dragging = true; updateGraphics(); });
-    window.addEventListener('mousemove', (e)=>{ if(!dragging) return; b = {x:e.clientX,y:e.clientY}; updateGraphics(); });
-    window.addEventListener('mouseup', ()=> dragging=false);
-
-    // Render once
-    function render(){ updateGraphics(); }
     render();
+  }
 
-    // Resize observer keeps SVG viewBox mapping correct
-    new ResizeObserver(()=> updateGraphics()).observe(stage);
-  </script>
-</body>
-</html>
+  document.getElementById('openSettings').addEventListener('click', openSettings);
+  document.getElementById('save').addEventListener('click', (e)=>{ e.preventDefault(); applySettings(); dlg.close();});
+
+  function updateSystemBadge(){
+    document.getElementById('dpr').textContent = S.dpr.toFixed(2);
+    document.getElementById('cssdev').textContent = `${S.nativeW}×${S.nativeH}`;
+  }
+  updateSystemBadge();
+
+  // --- Measurement engine ---
+  const stage = document.getElementById('stage');
+  const line  = document.getElementById('line');
+  const ghost = document.getElementById('ghost');
+  const cap1  = document.getElementById('cap1');
+  const cap2  = document.getElementById('cap2');
+  const readout = document.getElementById('readout');
+  const pxInfo  = document.getElementById('pxinfo');
+
+  let a = null, b = null; // points in CSS pixels {x,y}
+
+  function cssToViewBox(x, y){ // convert CSS px to viewBox (0..100)
+    const r = stage.getBoundingClientRect();
+    return { x: (x - r.left) / r.width * 100, y: (y - r.top) / r.height * 100 };
+  }
+
+  function updateGraphics(){
+    if(!a || !b){
+      line.setAttribute('x1',0); line.setAttribute('y1',0);
+      line.setAttribute('x2',0); line.setAttribute('y2',0);
+      ghost.setAttribute('x1',0); ghost.setAttribute('y1',0);
+      ghost.setAttribute('x2',0); ghost.setAttribute('y2',0);
+      cap1.setAttribute('x1',0); cap1.setAttribute('y1',0); cap1.setAttribute('x2',0); cap1.setAttribute('y2',0);
+      cap2.setAttribute('x1',0); cap2.setAttribute('y1',0); cap2.setAttribute('x2',0); cap2.setAttribute('y2',0);
+      readout.querySelector('.big').textContent = `0.00 mm | 0.000 in`;
+      pxInfo.textContent = `0 px`;
+      return;
+    }
+
+    const vb1 = cssToViewBox(a.x, a.y);
+    const vb2 = cssToViewBox(b.x, b.y);
+    line.setAttribute('x1', vb1.x); line.setAttribute('y1', vb1.y);
+    line.setAttribute('x2', vb2.x); line.setAttribute('y2', vb2.y);
+    ghost.setAttribute('x1', vb1.x); ghost.setAttribute('y1', vb1.y);
+    ghost.setAttribute('x2', vb2.x); ghost.setAttribute('y2', vb2.y);
+
+    // Draw perpendicular end caps (ticks) at each end
+    const dx = vb2.x - vb1.x, dy = vb2.y - vb1.y;
+    const mag = Math.hypot(dx,dy) || 1;
+    const nx = -dy / mag, ny = dx / mag; // unit perpendicular
+    const len = 1.0; // tick length in viewBox units (~1% of side). Tune if desired.
+    cap1.setAttribute('x1', vb1.x - nx*len/2); cap1.setAttribute('y1', vb1.y - ny*len/2);
+    cap1.setAttribute('x2', vb1.x + nx*len/2); cap1.setAttribute('y2', vb1.y + ny*len/2);
+    cap2.setAttribute('x1', vb2.x - nx*len/2); cap2.setAttribute('y1', vb2.y - ny*len/2);
+    cap2.setAttribute('x2', vb2.x + nx*len/2); cap2.setAttribute('y2', vb2.y + ny*len/2);
+
+    // Numeric readout
+    const dxCss = b.x - a.x, dyCss = b.y - a.y;
+    const distPx = Math.hypot(dxCss, dyCss);          // CSS px
+    const pxPerMM = cssPxPerMM();
+    const mm = distPx / pxPerMM;
+    const inches = mm / 25.4;
+    readout.querySelector('.big').textContent = `${mm.toFixed(2)} mm | ${inches.toFixed(3)} in`;
+    pxInfo.textContent = `${distPx.toFixed(1)} px  ·  ${pxPerMM.toFixed(3)} px/mm`;
+  }
+
+  // Touch handling (two fingers)
+  let tId1 = null, tId2 = null;
+  const getPos = t => ({ x:t.clientX, y:t.clientY });
+
+  stage.addEventListener('touchstart', (e)=>{
+    e.preventDefault();
+    for(const t of e.changedTouches){
+      if(tId1===null){ tId1 = t.identifier; a = getPos(t); }
+      else if(tId2===null){ tId2 = t.identifier; b = getPos(t); }
+    }
+    updateGraphics();
+  }, {passive:false});
+
+  stage.addEventListener('touchmove', (e)=>{
+    e.preventDefault();
+    for(const t of e.changedTouches){
+      if(t.identifier===tId1) a = getPos(t);
+      if(t.identifier===tId2) b = getPos(t);
+    }
+    if(tId1!==null && tId2!==null) updateGraphics();
+  }, {passive:false});
+
+  stage.addEventListener('touchend', (e)=>{
+    for(const t of e.changedTouches){
+      if(t.identifier===tId1) tId1 = null;
